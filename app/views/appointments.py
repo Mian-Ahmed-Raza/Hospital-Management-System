@@ -50,32 +50,48 @@ class AppointmentsWindow:
     
     def _create_widgets(self):
         """Create UI widgets"""
-        # Header
-        header_frame = tk.Frame(self.window, bg='#2ecc71', height=60)
+        # Set window background
+        self.window.configure(bg='#1a1a2e')
+        
+        # Header with modern styling
+        header_frame = tk.Frame(self.window, bg='#16213e', height=70)
         header_frame.pack(fill='x')
         header_frame.pack_propagate(False)
         
-        title_label = tk.Label(
-            header_frame,
-            text="Appointment Management",
-            font=('Arial', 16, 'bold'),
-            bg='#2ecc71',
-            fg='white'
+        # Icon and title
+        header_content = tk.Frame(header_frame, bg='#16213e')
+        header_content.pack(expand=True)
+        
+        icon_label = tk.Label(
+            header_content,
+            text="📅",
+            font=('Segoe UI Emoji', 24),
+            bg='#16213e',
+            fg='#2ecc71'
         )
-        title_label.pack(pady=15)
+        icon_label.pack(side='left', padx=(0, 15))
+        
+        title_label = tk.Label(
+            header_content,
+            text="Appointment Management",
+            font=('Segoe UI', 18, 'bold'),
+            bg='#16213e',
+            fg='#ffffff'
+        )
+        title_label.pack(side='left')
         
         # Main container
-        main_container = tk.Frame(self.window, bg='#ecf0f1')
+        main_container = tk.Frame(self.window, bg='#1a1a2e')
         main_container.pack(fill='both', expand=True, padx=20, pady=20)
         
         # Left panel - New Appointment Form
-        left_panel = tk.Frame(main_container, bg='white', relief='raised', bd=2)
+        left_panel = tk.Frame(main_container, bg='#16213e', relief='flat', bd=0)
         left_panel.pack(side='left', fill='both', expand=True, padx=(0, 10))
         
         self._create_appointment_form(left_panel)
         
         # Right panel - Appointments List
-        right_panel = tk.Frame(main_container, bg='white', relief='raised', bd=2)
+        right_panel = tk.Frame(main_container, bg='#16213e', relief='flat', bd=0)
         right_panel.pack(side='right', fill='both', expand=True, padx=(10, 0))
         
         self._create_appointments_list(right_panel)
@@ -84,14 +100,14 @@ class AppointmentsWindow:
         """Create new appointment form"""
         form_title = tk.Label(
             parent,
-            text="Schedule New Appointment",
-            font=('Arial', 13, 'bold'),
-            bg='white',
-            fg='#2c3e50'
+            text="➕ Schedule New Appointment",
+            font=('Segoe UI', 13, 'bold'),
+            bg='#16213e',
+            fg='#2ecc71'
         )
-        form_title.pack(pady=(15, 20))
+        form_title.pack(pady=(20, 20))
         
-        form_frame = tk.Frame(parent, bg='white')
+        form_frame = tk.Frame(parent, bg='#16213e')
         form_frame.pack(fill='both', expand=True, padx=20, pady=(0, 20))
         
         # Patient ID
@@ -104,9 +120,9 @@ class AppointmentsWindow:
         tk.Label(
             form_frame,
             text="Doctor:",
-            font=('Arial', 10),
-            bg='white',
-            fg='#2c3e50'
+            font=('Segoe UI', 10),
+            bg='#16213e',
+            fg='#7f8c8d'
         ).pack(anchor='w', pady=(10, 5))
         
         self.doctor_var = tk.StringVar()
@@ -115,12 +131,20 @@ class AppointmentsWindow:
         
         self.doctors_data = doctors  # Store for later use
         
+        # Style combobox
+        style = ttk.Style()
+        style.configure('Dark.TCombobox', 
+                       fieldbackground='#1a1a2e',
+                       background='#1a1a2e',
+                       foreground='#ffffff')
+        
         doctor_combo = ttk.Combobox(
             form_frame,
             textvariable=self.doctor_var,
             values=doctor_names,
             state='readonly',
-            font=('Arial', 10)
+            font=('Segoe UI', 10),
+            style='Dark.TCombobox'
         )
         doctor_combo.pack(fill='x', pady=(0, 10))
         if doctor_names:
@@ -130,9 +154,9 @@ class AppointmentsWindow:
         tk.Label(
             form_frame,
             text="Department:",
-            font=('Arial', 10),
-            bg='white',
-            fg='#2c3e50'
+            font=('Segoe UI', 10),
+            bg='#16213e',
+            fg='#7f8c8d'
         ).pack(anchor='w', pady=(10, 5))
         
         self.department_var = tk.StringVar()
@@ -144,7 +168,8 @@ class AppointmentsWindow:
             textvariable=self.department_var,
             values=departments,
             state='readonly',
-            font=('Arial', 10)
+            font=('Segoe UI', 10),
+            style='Dark.TCombobox'
         )
         dept_combo.pack(fill='x', pady=(0, 10))
         dept_combo.set('General Medicine')
@@ -161,46 +186,59 @@ class AppointmentsWindow:
         tk.Label(
             form_frame,
             text="Reason for Visit:",
-            font=('Arial', 10),
-            bg='white',
-            fg='#2c3e50'
+            font=('Segoe UI', 10),
+            bg='#16213e',
+            fg='#7f8c8d'
         ).pack(anchor='w', pady=(10, 5))
         
+        reason_bg = tk.Frame(form_frame, bg='#1a1a2e', relief='flat')
+        reason_bg.pack(fill='x', pady=(0, 10))
+        
         self.reason_entry = tk.Text(
-            form_frame,
-            font=('Arial', 10),
-            relief='solid',
-            bd=1,
-            height=3
+            reason_bg,
+            font=('Segoe UI', 10),
+            bg='#1a1a2e',
+            fg='#ffffff',
+            relief='flat',
+            bd=0,
+            height=3,
+            insertbackground='#3498db'
         )
-        self.reason_entry.pack(fill='x', pady=(0, 10))
+        self.reason_entry.pack(fill='x', padx=10, pady=10)
         
         # Buttons
-        button_frame = tk.Frame(form_frame, bg='white')
+        button_frame = tk.Frame(form_frame, bg='#16213e')
         button_frame.pack(fill='x', pady=(10, 0))
         
         schedule_btn = tk.Button(
             button_frame,
-            text="Schedule Appointment",
-            font=('Arial', 11, 'bold'),
+            text="✓ Schedule Appointment",
+            font=('Segoe UI', 11, 'bold'),
             bg='#2ecc71',
             fg='white',
             cursor='hand2',
             relief='flat',
+            bd=0,
             command=self.schedule_appointment
         )
         schedule_btn.pack(fill='x', pady=(0, 5))
+        schedule_btn.bind('<Enter>', lambda e: schedule_btn.config(bg='#27ae60'))
+        schedule_btn.bind('<Leave>', lambda e: schedule_btn.config(bg='#2ecc71'))
         
         clear_btn = tk.Button(
             button_frame,
-            text="Clear Form",
-            font=('Arial', 10),
+            text="✖ Clear Form",
+            font=('Segoe UI', 10),
             bg='#95a5a6',
             fg='white',
             cursor='hand2',
             relief='flat',
+            bd=0,
             command=self.clear_form
         )
+        clear_btn.pack(fill='x')
+        clear_btn.bind('<Enter>', lambda e: clear_btn.config(bg='#7f8c8d'))
+        clear_btn.bind('<Leave>', lambda e: clear_btn.config(bg='#95a5a6'))
         clear_btn.pack(fill='x')
     
     def _create_form_field(self, parent, label_text, field_name):
@@ -208,66 +246,93 @@ class AppointmentsWindow:
         tk.Label(
             parent,
             text=label_text,
-            font=('Arial', 10),
-            bg='white',
-            fg='#2c3e50'
+            font=('Segoe UI', 10),
+            bg='#16213e',
+            fg='#7f8c8d'
         ).pack(anchor='w', pady=(10, 5))
         
         entry = tk.Entry(
             parent,
-            font=('Arial', 10),
-            relief='solid',
-            bd=1
+            font=('Segoe UI', 10),
+            bg='#1a1a2e',
+            fg='#ffffff',
+            relief='flat',
+            bd=0,
+            insertbackground='#3498db'
         )
-        entry.pack(fill='x', pady=(0, 10))
+        entry.pack(fill='x', pady=(0, 10), ipady=5)
         setattr(self, f"{field_name}_entry", entry)
     
     def _create_appointments_list(self, parent):
         """Create appointments list view"""
         list_title = tk.Label(
             parent,
-            text="Upcoming Appointments",
-            font=('Arial', 13, 'bold'),
-            bg='white',
-            fg='#2c3e50'
+            text="📅 Upcoming Appointments",
+            font=('Segoe UI', 13, 'bold'),
+            bg='#16213e',
+            fg='#2ecc71'
         )
         list_title.pack(pady=(15, 20))
         
         # Search frame
-        search_frame = tk.Frame(parent, bg='white')
+        search_frame = tk.Frame(parent, bg='#16213e')
         search_frame.pack(fill='x', padx=20, pady=(0, 10))
         
         tk.Label(
             search_frame,
-            text="Search:",
-            font=('Arial', 10),
-            bg='white'
+            text="🔍 Search:",
+            font=('Segoe UI', 10),
+            bg='#16213e',
+            fg='#7f8c8d'
         ).pack(side='left', padx=(0, 10))
         
         self.search_entry = tk.Entry(
             search_frame,
-            font=('Arial', 10),
-            relief='solid',
-            bd=1
+            font=('Segoe UI', 10),
+            bg='#1a1a2e',
+            fg='#ffffff',
+            relief='flat',
+            bd=0,
+            insertbackground='#3498db'
         )
-        self.search_entry.pack(side='left', fill='x', expand=True, padx=(0, 10))
+        self.search_entry.pack(side='left', fill='x', expand=True, padx=(0, 10), ipady=5)
         self.search_entry.bind('<KeyRelease>', lambda e: self.load_appointments())
         
         search_btn = tk.Button(
             search_frame,
-            text="Refresh",
-            font=('Arial', 9),
+            text="⟳ Refresh",
+            font=('Segoe UI', 9),
             bg='#3498db',
             fg='white',
             cursor='hand2',
             relief='flat',
+            bd=0,
             command=self.load_appointments
         )
         search_btn.pack(side='right')
+        search_btn.bind('<Enter>', lambda e: search_btn.config(bg='#2980b9'))
+        search_btn.bind('<Leave>', lambda e: search_btn.config(bg='#3498db'))
         
         # Treeview for appointments
-        tree_frame = tk.Frame(parent, bg='white')
+        tree_frame = tk.Frame(parent, bg='#16213e')
         tree_frame.pack(fill='both', expand=True, padx=20, pady=(0, 20))
+        
+        # Configure treeview style
+        style = ttk.Style()
+        style.theme_use('clam')
+        style.configure('Dark.Treeview',
+                       background='#1a1a2e',
+                       foreground='#ffffff',
+                       fieldbackground='#1a1a2e',
+                       borderwidth=0,
+                       font=('Segoe UI', 9))
+        style.configure('Dark.Treeview.Heading',
+                       background='#16213e',
+                       foreground='#2ecc71',
+                       borderwidth=0,
+                       font=('Segoe UI', 10, 'bold'))
+        style.map('Dark.Treeview',
+                 background=[('selected', '#3498db')])
         
         # Scrollbars
         vsb = ttk.Scrollbar(tree_frame, orient='vertical')
@@ -279,7 +344,8 @@ class AppointmentsWindow:
             columns=('ID', 'Patient', 'Doctor', 'Date', 'Time', 'Status'),
             show='headings',
             yscrollcommand=vsb.set,
-            xscrollcommand=hsb.set
+            xscrollcommand=hsb.set,
+            style='Dark.Treeview'
         )
         
         vsb.config(command=self.appointments_tree.yview)

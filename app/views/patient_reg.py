@@ -46,28 +46,44 @@ class PatientRegistrationWindow:
     
     def _create_widgets(self):
         """Create UI widgets"""
-        # Header
-        header_frame = tk.Frame(self.window, bg='#3498db', height=60)
+        # Set window background
+        self.window.configure(bg='#1a1a2e')
+        
+        # Header with modern styling
+        header_frame = tk.Frame(self.window, bg='#16213e', height=70)
         header_frame.pack(fill='x')
         header_frame.pack_propagate(False)
         
-        title_label = tk.Label(
-            header_frame,
-            text="Patient Registration",
-            font=('Arial', 16, 'bold'),
-            bg='#3498db',
-            fg='white'
+        # Icon and title
+        header_content = tk.Frame(header_frame, bg='#16213e')
+        header_content.pack(expand=True)
+        
+        icon_label = tk.Label(
+            header_content,
+            text="👤",
+            font=('Segoe UI Emoji', 24),
+            bg='#16213e',
+            fg='#3498db'
         )
-        title_label.pack(pady=15)
+        icon_label.pack(side='left', padx=(0, 15))
+        
+        title_label = tk.Label(
+            header_content,
+            text="Patient Registration",
+            font=('Segoe UI', 18, 'bold'),
+            bg='#16213e',
+            fg='#ffffff'
+        )
+        title_label.pack(side='left')
         
         # Main form frame with scrollbar
-        main_frame = tk.Frame(self.window, bg='#ecf0f1')
+        main_frame = tk.Frame(self.window, bg='#1a1a2e')
         main_frame.pack(fill='both', expand=True, padx=20, pady=20)
         
         # Canvas for scrolling
-        canvas = tk.Canvas(main_frame, bg='#ecf0f1', highlightthickness=0)
+        canvas = tk.Canvas(main_frame, bg='#1a1a2e', highlightthickness=0)
         scrollbar = ttk.Scrollbar(main_frame, orient='vertical', command=canvas.yview)
-        scrollable_frame = tk.Frame(canvas, bg='#ecf0f1')
+        scrollable_frame = tk.Frame(canvas, bg='#1a1a2e')
         
         scrollable_frame.bind(
             "<Configure>",
@@ -84,46 +100,56 @@ class PatientRegistrationWindow:
         scrollbar.pack(side='right', fill='y')
         
         # Buttons frame
-        button_frame = tk.Frame(self.window, bg='#ecf0f1')
+        button_frame = tk.Frame(self.window, bg='#1a1a2e')
         button_frame.pack(fill='x', padx=20, pady=(0, 20))
         
         register_btn = tk.Button(
             button_frame,
-            text="Register Patient",
-            font=('Arial', 12, 'bold'),
+            text="✓ Register Patient",
+            font=('Segoe UI', 12, 'bold'),
             bg='#2ecc71',
             fg='white',
+            activebackground='#27ae60',
+            activeforeground='white',
             width=20,
             height=2,
             cursor='hand2',
             relief='flat',
+            bd=0,
             command=self.register_patient
         )
         register_btn.pack(side='left', padx=(0, 10))
+        register_btn.bind('<Enter>', lambda e: register_btn.config(bg='#27ae60'))
+        register_btn.bind('<Leave>', lambda e: register_btn.config(bg='#2ecc71'))
         
         clear_btn = tk.Button(
             button_frame,
-            text="Clear Form",
-            font=('Arial', 12),
-            bg='#95a5a6',
+            text="↺ Clear Form",
+            font=('Segoe UI', 12),
+            bg='#34495e',
             fg='white',
+            activebackground='#2c3e50',
+            activeforeground='white',
             width=15,
             height=2,
             cursor='hand2',
             relief='flat',
+            bd=0,
             command=self.clear_form
         )
         clear_btn.pack(side='left')
+        clear_btn.bind('<Enter>', lambda e: clear_btn.config(bg='#2c3e50'))
+        clear_btn.bind('<Leave>', lambda e: clear_btn.config(bg='#34495e'))
     
     def _create_form_fields(self, parent):
         """Create form input fields"""
-        # Personal Information
+        # Personal Information Section
         section_label = tk.Label(
             parent,
-            text="Personal Information",
-            font=('Arial', 13, 'bold'),
-            bg='#ecf0f1',
-            fg='#2c3e50'
+            text="📋 Personal Information",
+            font=('Segoe UI', 13, 'bold'),
+            bg='#1a1a2e',
+            fg='#3498db'
         )
         section_label.pack(anchor='w', pady=(10, 15))
         
@@ -134,40 +160,46 @@ class PatientRegistrationWindow:
         self._create_field(parent, "Last Name *", "last_name")
         
         # Date of Birth
-        dob_frame = tk.Frame(parent, bg='#ecf0f1')
-        dob_frame.pack(fill='x', pady=5)
+        dob_frame = tk.Frame(parent, bg='#1a1a2e')
+        dob_frame.pack(fill='x', pady=8)
         
         tk.Label(
             dob_frame,
             text="Date of Birth * (YYYY-MM-DD):",
-            font=('Arial', 10),
-            bg='#ecf0f1',
-            fg='#2c3e50'
+            font=('Segoe UI', 10),
+            bg='#1a1a2e',
+            fg='#7f8c8d'
         ).pack(anchor='w')
         
+        entry_bg = tk.Frame(dob_frame, bg='#16213e', relief='flat')
+        entry_bg.pack(fill='x', pady=(5, 0))
+        
         self.dob_entry = tk.Entry(
-            dob_frame,
-            font=('Arial', 10),
-            relief='solid',
-            bd=1
+            entry_bg,
+            font=('Segoe UI', 10),
+            bg='#16213e',
+            fg='#ffffff',
+            relief='flat',
+            bd=0,
+            insertbackground='#3498db'
         )
-        self.dob_entry.pack(fill='x', pady=(5, 0))
+        self.dob_entry.pack(fill='x', padx=10, pady=10)
         self.dob_entry.insert(0, "2000-01-01")
         
         # Gender
-        gender_frame = tk.Frame(parent, bg='#ecf0f1')
-        gender_frame.pack(fill='x', pady=5)
+        gender_frame = tk.Frame(parent, bg='#1a1a2e')
+        gender_frame.pack(fill='x', pady=8)
         
         tk.Label(
             gender_frame,
             text="Gender *:",
-            font=('Arial', 10),
-            bg='#ecf0f1',
-            fg='#2c3e50'
+            font=('Segoe UI', 10),
+            bg='#1a1a2e',
+            fg='#7f8c8d'
         ).pack(anchor='w')
         
         self.gender_var = tk.StringVar(value="Male")
-        gender_options = tk.Frame(gender_frame, bg='#ecf0f1')
+        gender_options = tk.Frame(gender_frame, bg='#1a1a2e')
         gender_options.pack(anchor='w', pady=(5, 0))
         
         for gender in ['Male', 'Female', 'Other']:
@@ -176,17 +208,21 @@ class PatientRegistrationWindow:
                 text=gender,
                 variable=self.gender_var,
                 value=gender,
-                font=('Arial', 10),
-                bg='#ecf0f1'
+                font=('Segoe UI', 10),
+                bg='#1a1a2e',
+                fg='#ffffff',
+                selectcolor='#16213e',
+                activebackground='#1a1a2e',
+                activeforeground='#ffffff'
             ).pack(side='left', padx=(0, 15))
         
         # Contact Information
         section_label = tk.Label(
             parent,
-            text="Contact Information",
-            font=('Arial', 13, 'bold'),
-            bg='#ecf0f1',
-            fg='#2c3e50'
+            text="📞 Contact Information",
+            font=('Segoe UI', 13, 'bold'),
+            bg='#1a1a2e',
+            fg='#3498db'
         )
         section_label.pack(anchor='w', pady=(20, 15))
         
@@ -202,32 +238,43 @@ class PatientRegistrationWindow:
         # Medical Information
         section_label = tk.Label(
             parent,
-            text="Medical Information",
-            font=('Arial', 13, 'bold'),
-            bg='#ecf0f1',
-            fg='#2c3e50'
+            text="🏥 Medical Information",
+            font=('Segoe UI', 13, 'bold'),
+            bg='#1a1a2e',
+            fg='#3498db'
         )
         section_label.pack(anchor='w', pady=(20, 15))
         
         # Blood Group
-        blood_frame = tk.Frame(parent, bg='#ecf0f1')
-        blood_frame.pack(fill='x', pady=5)
+        blood_frame = tk.Frame(parent, bg='#1a1a2e')
+        blood_frame.pack(fill='x', pady=8)
         
         tk.Label(
             blood_frame,
             text="Blood Group:",
-            font=('Arial', 10),
-            bg='#ecf0f1',
-            fg='#2c3e50'
+            font=('Segoe UI', 10),
+            bg='#1a1a2e',
+            fg='#7f8c8d'
         ).pack(anchor='w')
         
         self.blood_group_var = tk.StringVar()
+        
+        # Style the combobox
+        style = ttk.Style()
+        style.theme_use('default')
+        style.configure('Dark.TCombobox', 
+                       fieldbackground='#16213e',
+                       background='#16213e',
+                       foreground='#ffffff',
+                       arrowcolor='#3498db')
+        
         blood_combo = ttk.Combobox(
             blood_frame,
             textvariable=self.blood_group_var,
             values=['', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
             state='readonly',
-            font=('Arial', 10)
+            font=('Segoe UI', 10),
+            style='Dark.TCombobox'
         )
         blood_combo.pack(fill='x', pady=(5, 0))
         blood_combo.set('')
@@ -237,35 +284,44 @@ class PatientRegistrationWindow:
     
     def _create_field(self, parent, label_text, field_name, height=1):
         """Create a form field"""
-        field_frame = tk.Frame(parent, bg='#ecf0f1')
-        field_frame.pack(fill='x', pady=5)
+        field_frame = tk.Frame(parent, bg='#1a1a2e')
+        field_frame.pack(fill='x', pady=8)
         
         label = tk.Label(
             field_frame,
             text=label_text + ":",
-            font=('Arial', 10),
-            bg='#ecf0f1',
-            fg='#2c3e50'
+            font=('Segoe UI', 10),
+            bg='#1a1a2e',
+            fg='#7f8c8d'
         )
         label.pack(anchor='w')
         
+        entry_bg = tk.Frame(field_frame, bg='#16213e', relief='flat')
+        entry_bg.pack(fill='x', pady=(5, 0))
+        
         if height > 1:
             entry = tk.Text(
-                field_frame,
-                font=('Arial', 10),
-                relief='solid',
-                bd=1,
-                height=height
+                entry_bg,
+                font=('Segoe UI', 10),
+                bg='#16213e',
+                fg='#ffffff',
+                relief='flat',
+                bd=0,
+                height=height,
+                insertbackground='#3498db'
             )
         else:
             entry = tk.Entry(
-                field_frame,
-                font=('Arial', 10),
-                relief='solid',
-                bd=1
+                entry_bg,
+                font=('Segoe UI', 10),
+                bg='#16213e',
+                fg='#ffffff',
+                relief='flat',
+                bd=0,
+                insertbackground='#3498db'
             )
         
-        entry.pack(fill='x', pady=(5, 0))
+        entry.pack(fill='x', padx=10, pady=10)
         setattr(self, f"{field_name}_entry", entry)
     
     def register_patient(self):

@@ -53,64 +53,100 @@ class Dashboard:
     
     def _create_widgets(self):
         """Create UI widgets"""
-        # Header frame
-        header_frame = tk.Frame(self.window, bg='#2c3e50', height=80)
+        # Set window background
+        self.window.configure(bg='#1a1a2e')
+        
+        # Header frame with modern styling
+        header_frame = tk.Frame(self.window, bg='#16213e', height=90)
         header_frame.pack(fill='x')
         header_frame.pack_propagate(False)
         
+        # Icon and Title container
+        title_container = tk.Frame(header_frame, bg='#16213e')
+        title_container.pack(side='left', padx=25, pady=20)
+        
+        # Medical icon
+        icon_label = tk.Label(
+            title_container,
+            text="🏥",
+            font=('Segoe UI Emoji', 28),
+            bg='#16213e',
+            fg='#3498db'
+        )
+        icon_label.pack(side='left', padx=(0, 15))
+        
         # Title
         title_label = tk.Label(
-            header_frame,
+            title_container,
             text="Hospital Management System",
-            font=('Arial', 18, 'bold'),
-            bg='#2c3e50',
-            fg='white'
+            font=('Segoe UI', 20, 'bold'),
+            bg='#16213e',
+            fg='#ffffff'
         )
-        title_label.pack(side='left', padx=20, pady=20)
+        title_label.pack(side='left')
         
-        # User info
-        user_label = tk.Label(
-            header_frame,
-            text=f"Welcome, {self.user.full_name} ({self.user.role.value.title()})",
-            font=('Arial', 11),
-            bg='#2c3e50',
-            fg='#ecf0f1'
+        # User info with modern styling
+        user_container = tk.Frame(header_frame, bg='#16213e')
+        user_container.pack(side='right', padx=25)
+        
+        user_icon = tk.Label(
+            user_container,
+            text="👤",
+            font=('Segoe UI Emoji', 16),
+            bg='#16213e',
+            fg='#3498db'
         )
-        user_label.pack(side='right', padx=20)
+        user_icon.pack(side='left', padx=(0, 10))
+        
+        user_label = tk.Label(
+            user_container,
+            text=f"{self.user.full_name}\n{self.user.role.value.title()}",
+            font=('Segoe UI', 10),
+            bg='#16213e',
+            fg='#ffffff',
+            justify='left'
+        )
+        user_label.pack(side='left')
         
         # Main content area
-        content_frame = tk.Frame(self.window, bg='#ecf0f1')
-        content_frame.pack(fill='both', expand=True, padx=20, pady=20)
+        content_frame = tk.Frame(self.window, bg='#1a1a2e')
+        content_frame.pack(fill='both', expand=True, padx=25, pady=25)
         
         # Stats frame
-        stats_frame = tk.Frame(content_frame, bg='#ecf0f1')
-        stats_frame.pack(fill='x', pady=(0, 20))
+        stats_frame = tk.Frame(content_frame, bg='#1a1a2e')
+        stats_frame.pack(fill='x', pady=(0, 25))
         
         self._create_stats_cards(stats_frame)
         
         # Navigation buttons frame
-        nav_frame = tk.Frame(content_frame, bg='#ecf0f1')
+        nav_frame = tk.Frame(content_frame, bg='#1a1a2e')
         nav_frame.pack(fill='both', expand=True)
         
         self._create_navigation_buttons(nav_frame)
         
         # Footer frame
-        footer_frame = tk.Frame(self.window, bg='#34495e', height=50)
+        footer_frame = tk.Frame(self.window, bg='#16213e', height=50)
         footer_frame.pack(fill='x')
         footer_frame.pack_propagate(False)
         
+        # Logout button with modern styling
         logout_btn = tk.Button(
             footer_frame,
-            text="Logout",
-            font=('Arial', 10),
+            text="🚪 Logout",
+            font=('Segoe UI', 10, 'bold'),
             bg='#e74c3c',
             fg='white',
+            activebackground='#c0392b',
+            activeforeground='white',
             width=15,
             cursor='hand2',
             relief='flat',
+            bd=0,
             command=self.logout
         )
-        logout_btn.pack(side='right', padx=20, pady=10)
+        logout_btn.pack(side='right', padx=25, pady=10)
+        logout_btn.bind('<Enter>', lambda e: logout_btn.config(bg='#c0392b'))
+        logout_btn.bind('<Leave>', lambda e: logout_btn.config(bg='#e74c3c'))
     
     def _create_stats_cards(self, parent):
         """Create statistics cards"""
@@ -119,60 +155,87 @@ class Dashboard:
         total_appointments = len(self.db.read('appointments'))
         
         stats = [
-            ("Total Patients", total_patients, "#3498db"),
-            ("Total Appointments", total_appointments, "#2ecc71"),
-            ("Active Users", len(self.db.read('users', {'is_active': True})), "#e67e22")
+            ("👥 Total Patients", total_patients, "#3498db", "#2980b9"),
+            ("📅 Appointments", total_appointments, "#2ecc71", "#27ae60"),
+            ("👨‍⚕️ Active Users", len(self.db.read('users', {'is_active': True})), "#e67e22", "#d35400")
         ]
         
-        for i, (label, value, color) in enumerate(stats):
-            card = tk.Frame(parent, bg=color, relief='raised', bd=2)
-            card.pack(side='left', fill='both', expand=True, padx=10)
+        for i, (label, value, color, hover_color) in enumerate(stats):
+            # Card container with modern shadow effect
+            card_container = tk.Frame(parent, bg='#1a1a2e')
+            card_container.pack(side='left', fill='both', expand=True, padx=8)
+            
+            # Shadow effect
+            shadow = tk.Frame(card_container, bg='#0d0d1a', relief='flat')
+            shadow.place(relx=0, rely=0.03, relwidth=1, relheight=1)
+            
+            # Main card
+            card = tk.Frame(card_container, bg='#16213e', relief='flat', bd=0)
+            card.place(relx=0, rely=0, relwidth=1, relheight=0.97)
+            
+            # Colored accent bar at top
+            accent = tk.Frame(card, bg=color, height=4)
+            accent.pack(fill='x')
             
             value_label = tk.Label(
                 card,
                 text=str(value),
-                font=('Arial', 28, 'bold'),
-                bg=color,
-                fg='white'
+                font=('Segoe UI', 36, 'bold'),
+                bg='#16213e',
+                fg='#ffffff'
             )
-            value_label.pack(pady=(15, 5))
+            value_label.pack(pady=(20, 5))
             
             title_label = tk.Label(
                 card,
                 text=label,
-                font=('Arial', 12),
-                bg=color,
-                fg='white'
+                font=('Segoe UI', 11),
+                bg='#16213e',
+                fg='#7f8c8d'
             )
-            title_label.pack(pady=(0, 15))
+            title_label.pack(pady=(0, 20))
     
     def _create_navigation_buttons(self, parent):
         """Create navigation buttons"""
         buttons = [
-            ("👤 Patient Registration", self.open_patient_registration, "#3498db"),
-            ("📅 Appointments", self.open_appointments, "#2ecc71"),
-            ("💰 Billing", self.open_billing, "#e67e22"),
-            ("📊 Reports", self.open_reports, "#9b59b6"),
-            ("👥 Patient Records", self.open_patient_records, "#1abc9c"),
-            ("⚙️ Settings", self.open_settings, "#34495e")
+            ("👤 Patient Registration", self.open_patient_registration, "#3498db", "#2980b9"),
+            ("📅 Appointments", self.open_appointments, "#2ecc71", "#27ae60"),
+            ("💰 Billing", self.open_billing, "#e67e22", "#d35400"),
+            ("📊 Reports", self.open_reports, "#9b59b6", "#8e44ad"),
+            ("👥 Patient Records", self.open_patient_records, "#1abc9c", "#16a085"),
+            ("⚙️ Settings", self.open_settings, "#34495e", "#2c3e50")
         ]
         
         row = 0
         col = 0
-        for text, command, color in buttons:
+        for text, command, color, hover_color in buttons:
+            # Button container for shadow effect
+            btn_container = tk.Frame(parent, bg='#1a1a2e')
+            btn_container.grid(row=row, column=col, padx=12, pady=12, sticky='nsew')
+            
+            # Shadow
+            shadow = tk.Frame(btn_container, bg='#0d0d1a')
+            shadow.place(relx=0.02, rely=0.02, relwidth=1, relheight=1)
+            
+            # Main button
             btn = tk.Button(
-                parent,
+                btn_container,
                 text=text,
-                font=('Arial', 13),
+                font=('Segoe UI', 13, 'bold'),
                 bg=color,
                 fg='white',
-                width=25,
-                height=3,
+                activebackground=hover_color,
+                activeforeground='white',
                 cursor='hand2',
                 relief='flat',
+                bd=0,
                 command=command
             )
-            btn.grid(row=row, column=col, padx=15, pady=15, sticky='nsew')
+            btn.place(relx=0, rely=0, relwidth=1, relheight=0.98)
+            
+            # Hover effects
+            btn.bind('<Enter>', lambda e, b=btn, hc=hover_color: b.config(bg=hc))
+            btn.bind('<Leave>', lambda e, b=btn, c=color: b.config(bg=c))
             
             col += 1
             if col > 1:
