@@ -162,7 +162,7 @@ def test_appointment_operations(db):
         # Cleanup
         db.delete('appointments', new_appointment['appointment_id'], 'appointment_id')
         db.delete('patients', test_patient['patient_id'], 'patient_id')
-        print(f"✓ Deleted appointment and test patient")
+        print("✓ Deleted appointment and test patient")
         
         return True
     except Exception as e:

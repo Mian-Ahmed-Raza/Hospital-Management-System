@@ -75,7 +75,7 @@ def migrate_data():
         if table == 'users':
             existing_users = db.read('users')
             if existing_users:
-                print(f"  ℹ Skipping users table (default users already exist)")
+                print("  ℹ Skipping users table (default users already exist)")
                 continue
         
         # Migrate each record

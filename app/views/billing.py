@@ -946,7 +946,7 @@ class BillingWindow:
         # Parse services
         try:
             services = json.loads(invoice_data.get('services', '[]'))
-        except:
+        except (json.JSONDecodeError, TypeError):
             services = []
         
         # Build details text

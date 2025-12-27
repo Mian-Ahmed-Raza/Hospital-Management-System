@@ -36,7 +36,7 @@ class Appointment:
     reason: str
     status: AppointmentStatus = AppointmentStatus.SCHEDULED
     notes: Optional[str] = None
-    created_at: str = None
+    created_at: Optional[str] = None
     
     def __post_init__(self):
         """Validate appointment data after initialization"""
