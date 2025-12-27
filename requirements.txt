@@ -1,0 +1,15 @@
+# Hospital Management System Requirements
+
+## Python Version
+- Python 3.8 or higher
+
+## Core Dependencies
+tkinter>=8.6  # GUI framework (usually comes with Python)
+
+## Testing Dependencies
+pytest>=7.0.0
+pytest-cov>=3.0.0
+
+## Development Dependencies
+pylint>=2.15.0
+autopep8>=2.0.0
