@@ -204,6 +204,36 @@ class BillingWindow:
                        background='#16213e',
                        foreground='#ffffff',
                        borderwidth=0)
+        
+        # Action buttons below the list
+        action_frame = tk.Frame(parent, bg='#16213e')
+        action_frame.pack(fill='x', padx=15, pady=(10, 15))
+        
+        mark_paid_btn = tk.Button(
+            action_frame,
+            text="✓ Mark as Paid",
+            font=('Segoe UI', 10, 'bold'),
+            bg='#2ecc71',
+            fg='white',
+            activebackground='#27ae60',
+            cursor='hand2',
+            relief='flat',
+            command=self.mark_invoice_paid
+        )
+        mark_paid_btn.pack(side='left', padx=(0, 5), fill='x', expand=True)
+        
+        view_details_btn = tk.Button(
+            action_frame,
+            text="📄 View Details",
+            font=('Segoe UI', 10, 'bold'),
+            bg='#3498db',
+            fg='white',
+            activebackground='#2980b9',
+            cursor='hand2',
+            relief='flat',
+            command=self.view_invoice_details
+        )
+        view_details_btn.pack(side='left', padx=(5, 0), fill='x', expand=True)
     
     def _create_invoice_form(self, parent):
         """Create invoice creation/details form"""
@@ -246,6 +276,12 @@ class BillingWindow:
         
         canvas.create_window((0, 0), window=scrollable_frame, anchor='nw')
         canvas.configure(yscrollcommand=scrollbar.set)
+        
+        # Enable mouse wheel scrolling
+        def _on_mousewheel(event):
+            canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+        
+        canvas.bind_all("<MouseWheel>", _on_mousewheel)
         
         # Patient Selection Section
         section1 = tk.LabelFrame(
@@ -483,7 +519,7 @@ class BillingWindow:
             fg='#ffffff'
         ).pack(side='left', padx=15, pady=10)
         
-        self.total_amount_var = tk.StringVar(value="₹ 0.00")
+        self.total_amount_var = tk.StringVar(value="PKR 0.00")
         tk.Label(
             total_frame,
             textvariable=self.total_amount_var,
@@ -617,7 +653,7 @@ class BillingWindow:
     def _get_service_list(self):
         """Get list of available services"""
         services = self.billing_engine.SERVICES
-        return [f"{code} - {data['name']} (₹{data['price']})" 
+        return [f"{code} - {data['name']} (PKR {data['price']})" 
                 for code, data in services.items()]
     
     def search_patient(self):
@@ -723,10 +759,10 @@ class BillingWindow:
         
         for item in self.current_invoice.items:
             text += f"{item.description:<30} {item.quantity:>5} "
-            text += f"₹{item.unit_price:>8.2f} ₹{item.total:>8.2f}\n"
+            text += f"PKR{item.unit_price:>7.2f} PKR{item.total:>7.2f}\n"
         
         text += "-" * 60 + "\n"
-        text += f"{'Subtotal:':<48} ₹{self.current_invoice.subtotal:>9.2f}\n"
+        text += f"{'Subtotal:':<48} PKR{self.current_invoice.subtotal:>8.2f}\n"
         
         self.services_text.insert('1.0', text)
     
@@ -748,16 +784,16 @@ class BillingWindow:
             
             # Show calculation
             calc_text = f"\nDiscount ({self.current_invoice.discount_percent}%):"
-            calc_text += f"{' ' * 30} -₹{self.current_invoice.discount_amount:>8.2f}\n"
+            calc_text += f"{' ' * 30} -PKR{self.current_invoice.discount_amount:>7.2f}\n"
             calc_text += f"Tax ({self.current_invoice.tax_percent}%):"
-            calc_text += f"{' ' * 35} ₹{self.current_invoice.tax_amount:>8.2f}\n"
+            calc_text += f"{' ' * 35} PKR{self.current_invoice.tax_amount:>7.2f}\n"
             calc_text += "=" * 60 + "\n"
-            calc_text += f"{'TOTAL AMOUNT:':<48} ₹{self.current_invoice.total:>9.2f}\n"
+            calc_text += f"{'TOTAL AMOUNT:':<48} PKR{self.current_invoice.total:>8.2f}\n"
             
             self.services_text.insert(tk.END, calc_text)
             
             # Update total label
-            self.total_amount_var.set(f"₹ {self.current_invoice.total:.2f}")
+            self.total_amount_var.set(f"PKR {self.current_invoice.total:.2f}")
             
         except ValueError:
             self.window.lift()
@@ -818,7 +854,7 @@ class BillingWindow:
         self.discount_var.set('0')
         self.tax_var.set('0')
         self.payment_method_var.set('Cash')
-        self.total_amount_var.set('₹ 0.00')
+        self.total_amount_var.set('PKR 0.00')
         self.services_text.delete('1.0', tk.END)
         self.current_invoice = None
     
@@ -873,7 +909,7 @@ class BillingWindow:
                     self.invoice_tree.insert('', 'end', values=(
                         invoice.get('bill_id', ''),
                         invoice.get('patient_name', ''),
-                        f"₹{amount:.2f}",
+                        f"PKR {amount:.2f}",
                         status
                     ))
         except Exception as e:
@@ -939,14 +975,14 @@ class BillingWindow:
             total = service.get('total', 0)
             subtotal += total
             
-            details += f"{desc:<35} {qty:>5} ₹{price:>10.2f} ₹{total:>10.2f}\n"
+            details += f"{desc:<35} {qty:>5} PKR{price:>9.2f} PKR{total:>9.2f}\n"
         
         details += "-" * 70 + "\n"
-        details += f"{'Subtotal:':<56} ₹{subtotal:>11.2f}\n"
+        details += f"{'Subtotal:':<56} PKR{subtotal:>10.2f}\n"
         
         total_amount = float(invoice_data.get('total_amount', 0))
         details += "=" * 70 + "\n"
-        details += f"{'TOTAL AMOUNT:':<56} ₹{total_amount:>11.2f}\n"
+        details += f"{'TOTAL AMOUNT:':<56} PKR{total_amount:>10.2f}\n"
         details += "=" * 70 + "\n"
         
         # Update text widget
@@ -960,24 +996,47 @@ class BillingWindow:
     
     def mark_invoice_paid(self):
         """Mark selected invoice as paid"""
-        if not hasattr(self, 'selected_invoice_id'):
-            messagebox.showwarning("No Selection", "Please select an invoice first")
+        # Get selected invoice from treeview
+        selection = self.invoice_tree.selection()
+        if not selection:
+            messagebox.showwarning("No Selection", "Please select an invoice from the list first", parent=self.window)
             return
         
-        if messagebox.askyesno("Confirm", "Mark this invoice as paid?"):
+        # Get invoice ID from selected item
+        item = self.invoice_tree.item(selection[0])
+        invoice_id = item['values'][0]  # First column is invoice ID
+        
+        if messagebox.askyesno("Confirm", "Mark this invoice as paid?", parent=self.window):
             try:
-                self.db.update('billing', self.selected_invoice_id, 'bill_id', 
+                self.db.update('billing', invoice_id, 'bill_id', 
                              {'payment_status': 'paid'})
-                messagebox.showinfo("Success", "Invoice marked as paid")
+                messagebox.showinfo("Success", "Invoice marked as paid", parent=self.window)
                 self._load_invoices()
                 
-                # Reload details
-                invoices = self.db.read('billing', {'bill_id': self.selected_invoice_id})
-                if invoices:
-                    self._display_invoice_details(invoices[0])
+                # Update details if it's currently displayed
+                if hasattr(self, 'selected_invoice_id') and self.selected_invoice_id == invoice_id:
+                    invoices = self.db.read('billing', {'bill_id': invoice_id})
+                    if invoices:
+                        self._display_invoice_details(invoices[0])
                     
             except Exception as e:
-                messagebox.showerror("Error", f"Failed to update invoice: {str(e)}")
+                messagebox.showerror("Error", f"Failed to update invoice: {str(e)}", parent=self.window)
+    
+    def view_invoice_details(self):
+        """View details of selected invoice"""
+        selection = self.invoice_tree.selection()
+        if not selection:
+            messagebox.showwarning("No Selection", "Please select an invoice from the list first", parent=self.window)
+            return
+        
+        # Get invoice ID from selected item
+        item = self.invoice_tree.item(selection[0])
+        invoice_id = item['values'][0]
+        
+        # Fetch and display invoice details
+        invoices = self.db.read('billing', {'bill_id': invoice_id})
+        if invoices:
+            self._display_invoice_details(invoices[0])
     
     def print_invoice(self):
         """Print invoice"""
