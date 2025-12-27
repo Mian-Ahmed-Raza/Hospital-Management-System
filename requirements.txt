@@ -5,6 +5,8 @@
 
 ## Core Dependencies
 tkinter>=8.6  # GUI framework (usually comes with Python)
+sqlalchemy>=2.0.0  # ORM for database operations
+alembic>=1.13.0  # Database migration tool
 
 ## Testing Dependencies
 pytest>=7.0.0
