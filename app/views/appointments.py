@@ -28,7 +28,7 @@ class AppointmentsWindow:
         
         self.window = tk.Toplevel()
         self.window.title("Appointment Management")
-        self.window.geometry("1000x700")
+        self.window.geometry("1200x750")
         
         # Center window
         self._center_window()
@@ -84,15 +84,20 @@ class AppointmentsWindow:
         main_container = tk.Frame(self.window, bg='#1a1a2e')
         main_container.pack(fill='both', expand=True, padx=20, pady=20)
         
+        # Configure grid for better proportions
+        main_container.grid_columnconfigure(0, weight=2, minsize=500)  # Form gets more space
+        main_container.grid_columnconfigure(1, weight=3)  # List gets remaining space
+        main_container.grid_rowconfigure(0, weight=1)
+        
         # Left panel - New Appointment Form
         left_panel = tk.Frame(main_container, bg='#16213e', relief='flat', bd=0)
-        left_panel.pack(side='left', fill='both', expand=True, padx=(0, 10))
+        left_panel.grid(row=0, column=0, sticky='nsew', padx=(0, 10))
         
         self._create_appointment_form(left_panel)
         
         # Right panel - Appointments List
         right_panel = tk.Frame(main_container, bg='#16213e', relief='flat', bd=0)
-        right_panel.pack(side='right', fill='both', expand=True, padx=(10, 0))
+        right_panel.grid(row=0, column=1, sticky='nsew', padx=(10, 0))
         
         self._create_appointments_list(right_panel)
     
@@ -107,8 +112,40 @@ class AppointmentsWindow:
         )
         form_title.pack(pady=(20, 20))
         
-        form_frame = tk.Frame(parent, bg='#16213e')
-        form_frame.pack(fill='both', expand=True, padx=20, pady=(0, 20))
+        # Create canvas for scrolling
+        canvas_container = tk.Frame(parent, bg='#16213e')
+        canvas_container.pack(fill='both', expand=True, padx=20, pady=(0, 20))
+        
+        canvas = tk.Canvas(canvas_container, bg='#16213e', highlightthickness=0)
+        scrollbar = tk.Scrollbar(canvas_container, orient='vertical', command=canvas.yview)
+        
+        form_frame = tk.Frame(canvas, bg='#16213e')
+        
+        # Configure canvas scrolling
+        canvas.configure(yscrollcommand=scrollbar.set)
+        
+        # Pack scrollbar and canvas
+        scrollbar.pack(side='right', fill='y')
+        canvas.pack(side='left', fill='both', expand=True)
+        
+        # Create window in canvas
+        canvas_frame = canvas.create_window((0, 0), window=form_frame, anchor='nw')
+        
+        # Update scroll region when form_frame changes size
+        def configure_scroll_region(event):
+            canvas.configure(scrollregion=canvas.bbox('all'))
+            # Make sure the frame fills the canvas width
+            canvas_width = event.width
+            canvas.itemconfig(canvas_frame, width=canvas_width)
+        
+        form_frame.bind('<Configure>', lambda e: canvas.configure(scrollregion=canvas.bbox('all')))
+        canvas.bind('<Configure>', configure_scroll_region)
+        
+        # Enable mousewheel scrolling
+        def on_mousewheel(event):
+            canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+        
+        canvas.bind_all("<MouseWheel>", on_mousewheel)
         
         # Patient ID
         self._create_form_field(form_frame, "Patient ID:", "patient_id")
@@ -239,7 +276,6 @@ class AppointmentsWindow:
         clear_btn.pack(fill='x')
         clear_btn.bind('<Enter>', lambda e: clear_btn.config(bg='#7f8c8d'))
         clear_btn.bind('<Leave>', lambda e: clear_btn.config(bg='#95a5a6'))
-        clear_btn.pack(fill='x')
     
     def _create_form_field(self, parent, label_text, field_name):
         """Create a form field"""

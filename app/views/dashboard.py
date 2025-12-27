@@ -268,7 +268,8 @@ class Dashboard:
     
     def open_patient_records(self):
         """Open patient records window"""
-        messagebox.showinfo("Patient Records", "Patient records viewer - Coming soon!")
+        from app.views.patient_records import PatientRecordsWindow
+        PatientRecordsWindow(self.db)
     
     def open_settings(self):
         """Open settings window"""
