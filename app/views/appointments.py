@@ -467,18 +467,29 @@ class AppointmentsWindow:
             # Save to database
             self.db.create('appointments', appointment.to_dict())
             
+            # Ensure window stays on top
+            self.window.lift()
+            self.window.focus_force()
+            
             messagebox.showinfo(
                 "Success",
-                f"Appointment scheduled successfully!\n\nAppointment ID: {appointment_id}\nDate: {date} at {time}"
+                f"Appointment scheduled successfully!\n\nAppointment ID: {appointment_id}\nDate: {date} at {time}",
+                parent=self.window
             )
             
             self.clear_form()
             self.load_appointments()
             
         except (AppointmentException, ValidationException) as e:
-            messagebox.showerror("Error", str(e))
+            # Keep window open and show error
+            self.window.lift()
+            self.window.focus_force()
+            messagebox.showerror("Error", str(e), parent=self.window)
         except Exception as e:
-            messagebox.showerror("Error", f"An error occurred: {str(e)}")
+            # Keep window open and show error
+            self.window.lift()
+            self.window.focus_force()
+            messagebox.showerror("Error", f"An error occurred: {str(e)}", parent=self.window)
     
     def load_appointments(self):
         """Load appointments into treeview"""

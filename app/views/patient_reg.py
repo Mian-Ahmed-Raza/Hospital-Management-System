@@ -351,17 +351,28 @@ class PatientRegistrationWindow:
                 emergency_contact=emergency_contact
             )
             
+            # Ensure window stays on top for messagebox
+            self.window.lift()
+            self.window.focus_force()
+            
             messagebox.showinfo(
                 "Success",
-                f"Patient registered successfully!\n\nPatient ID: {patient.patient_id}\nName: {patient.full_name}"
+                f"Patient registered successfully!\n\nPatient ID: {patient.patient_id}\nName: {patient.full_name}",
+                parent=self.window
             )
             
             self.clear_form()
             
         except PatientManagerException as e:
-            messagebox.showerror("Registration Failed", str(e))
+            # Keep window open and show error
+            self.window.lift()
+            self.window.focus_force()
+            messagebox.showerror("Registration Failed", str(e), parent=self.window)
         except Exception as e:
-            messagebox.showerror("Error", f"An error occurred: {str(e)}")
+            # Keep window open and show error
+            self.window.lift()
+            self.window.focus_force()
+            messagebox.showerror("Error", f"An error occurred: {str(e)}", parent=self.window)
     
     def clear_form(self):
         """Clear all form fields"""

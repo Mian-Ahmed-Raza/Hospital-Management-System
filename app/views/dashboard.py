@@ -260,7 +260,8 @@ class Dashboard:
     
     def open_billing(self):
         """Open billing window"""
-        messagebox.showinfo("Billing", "Billing module - Coming soon!")
+        from app.views.billing import BillingWindow
+        BillingWindow(self.db)
     
     def open_reports(self):
         """Open reports window"""
