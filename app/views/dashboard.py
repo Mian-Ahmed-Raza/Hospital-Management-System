@@ -265,7 +265,8 @@ class Dashboard:
     
     def open_reports(self):
         """Open reports window"""
-        messagebox.showinfo("Reports", "Reports module - Coming soon!")
+        from app.views.reports import ReportsWindow
+        ReportsWindow(self.db)
     
     def open_patient_records(self):
         """Open patient records window"""
