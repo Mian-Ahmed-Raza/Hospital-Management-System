@@ -282,7 +282,15 @@ class Dashboard:
     
     def open_settings(self):
         """Open settings window"""
-        messagebox.showinfo("Settings", "Settings module - Coming soon!")
+        try:
+            print("DEBUG: Opening settings window...")
+            from app.views.settings import SettingsWindow
+            SettingsWindow(self.user, self.db, self.auth_service)
+        except Exception as e:
+            print(f"ERROR: Failed to open settings: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            messagebox.showerror("Error", f"Failed to open settings: {str(e)}")
     
     def logout(self):
         """Handle logout"""
