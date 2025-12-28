@@ -32,8 +32,8 @@ class ReportGenerator:
             Dictionary containing report data
         """
         try:
-            # Get all patients
-            patients = self.db.read('patients')
+            # Get all active patients
+            patients = self.db.read('patients', {'is_active': True})
             
             # Filter by date if provided
             if start_date and end_date:

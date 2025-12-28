@@ -198,48 +198,61 @@ class PatientRecordsWindow:
     
     def load_patients(self):
         """Load patients into treeview"""
-        # Clear existing items
-        for item in self.patients_tree.get_children():
-            self.patients_tree.delete(item)
-        
-        # Get search term
-        search_term = self.search_entry.get().strip().lower()
-        
-        # Load patients
-        patients = self.db.read('patients')
-        
-        # Sort by patient ID
-        patients.sort(key=lambda x: x.get('patient_id', ''))
-        
-        displayed_count = 0
-        # Insert into treeview
-        for patient in patients:
-            # Apply search filter
+        try:
+            # Clear existing items
+            for item in self.patients_tree.get_children():
+                self.patients_tree.delete(item)
+            
+            # Get search term
+            search_term = self.search_entry.get().strip().lower()
+            
+            # Load patients - filter for active patients only
+            patients = self.db.read('patients', {'is_active': True})
+            
+            # Debug output
+            print(f"DEBUG: Loaded {len(patients)} active patients from database")
+            
+            # Sort by patient ID
+            patients.sort(key=lambda x: x.get('patient_id', ''))
+            
+            displayed_count = 0
+            # Insert into treeview
+            for patient in patients:
+                # Apply search filter
+                if search_term:
+                    searchable = f"{patient.get('patient_id', '')} {patient.get('first_name', '')} {patient.get('last_name', '')} {patient.get('phone', '')} {patient.get('email', '')}".lower()
+                    if search_term not in searchable:
+                        continue
+                
+                full_name = f"{patient.get('first_name', '')} {patient.get('last_name', '')}"
+                
+                self.patients_tree.insert('', tk.END, values=(
+                    patient.get('patient_id', ''),
+                    full_name,
+                    patient.get('date_of_birth', ''),
+                    patient.get('gender', ''),
+                    patient.get('phone', ''),
+                    patient.get('email', ''),
+                    patient.get('blood_group', ''),
+                    patient.get('address', '')
+                ))
+                displayed_count += 1
+                print(f"DEBUG: Inserted patient {patient.get('patient_id')} - {full_name}")
+            
+            # Update stats
+            total = len(patients)
             if search_term:
-                searchable = f"{patient.get('patient_id', '')} {patient.get('first_name', '')} {patient.get('last_name', '')} {patient.get('phone', '')} {patient.get('email', '')}".lower()
-                if search_term not in searchable:
-                    continue
+                self.stats_label.config(text=f"Showing {displayed_count} of {total} patients")
+            else:
+                self.stats_label.config(text=f"Total Patients: {total}")
             
-            full_name = f"{patient.get('first_name', '')} {patient.get('last_name', '')}"
+            print(f"DEBUG: Display complete - {displayed_count} patients shown")
             
-            self.patients_tree.insert('', tk.END, values=(
-                patient.get('patient_id', ''),
-                full_name,
-                patient.get('date_of_birth', ''),
-                patient.get('gender', ''),
-                patient.get('phone', ''),
-                patient.get('email', ''),
-                patient.get('blood_group', ''),
-                patient.get('address', '')
-            ))
-            displayed_count += 1
-        
-        # Update stats
-        total = len(patients)
-        if search_term:
-            self.stats_label.config(text=f"Showing {displayed_count} of {total} patients")
-        else:
-            self.stats_label.config(text=f"Total Patients: {total}")
+        except Exception as e:
+            print(f"ERROR in load_patients: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            messagebox.showerror("Error", f"Failed to load patients: {str(e)}")
     
     def show_context_menu(self, event):
         """Show context menu for patient"""

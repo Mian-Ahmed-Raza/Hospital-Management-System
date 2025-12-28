@@ -265,8 +265,15 @@ class Dashboard:
     
     def open_reports(self):
         """Open reports window"""
-        from app.views.reports import ReportsWindow
-        ReportsWindow(self.db)
+        try:
+            print("DEBUG: Opening reports window...")
+            from app.views.reports import ReportsWindow
+            ReportsWindow(self.db)
+        except Exception as e:
+            print(f"ERROR: Failed to open reports: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            messagebox.showerror("Error", f"Failed to open reports: {str(e)}")
     
     def open_patient_records(self):
         """Open patient records window"""

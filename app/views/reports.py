@@ -19,20 +19,28 @@ class ReportsWindow:
         Args:
             db_connector: Database connector instance
         """
-        self.db = db_connector
-        self.report_generator = ReportGenerator(db_connector)
-        self.current_report = None
-        
-        self.window = tk.Toplevel()
-        self.window.title("Reports & Analytics")
-        self.window.geometry("1400x800")
-        self.window.configure(bg='#1a1a2e')
-        
-        # Center window
-        self._center_window()
-        
-        # Create UI
-        self._create_widgets()
+        try:
+            print("DEBUG: Initializing Reports Window...")
+            self.db = db_connector
+            self.report_generator = ReportGenerator(db_connector)
+            self.current_report = None
+            
+            self.window = tk.Toplevel()
+            self.window.title("Reports & Analytics")
+            self.window.geometry("1400x800")
+            self.window.configure(bg='#1a1a2e')
+            
+            # Center window
+            self._center_window()
+            
+            # Create UI
+            self._create_widgets()
+            print("DEBUG: Reports Window initialized successfully")
+        except Exception as e:
+            print(f"ERROR: Failed to initialize Reports Window: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            messagebox.showerror("Error", f"Failed to open reports: {str(e)}")
     
     def _center_window(self):
         """Center window on screen"""
@@ -287,32 +295,64 @@ class ReportsWindow:
     
     def generate_patient_report(self):
         """Generate patient summary report"""
-        start_date = self.start_date_var.get()
-        end_date = self.end_date_var.get()
-        
-        self.current_report = self.report_generator.generate_patient_summary_report(start_date, end_date)
-        self._display_patient_report()
+        try:
+            print("DEBUG: Generating patient report...")
+            start_date = self.start_date_var.get()
+            end_date = self.end_date_var.get()
+            
+            self.current_report = self.report_generator.generate_patient_summary_report(start_date, end_date)
+            print(f"DEBUG: Patient report generated: {self.current_report.get('total_patients', 0)} patients")
+            self._display_patient_report()
+        except Exception as e:
+            print(f"ERROR: Failed to generate patient report: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            messagebox.showerror("Error", f"Failed to generate patient report: {str(e)}")
     
     def generate_appointment_report(self):
         """Generate appointment report"""
-        start_date = self.start_date_var.get()
-        end_date = self.end_date_var.get()
-        
-        self.current_report = self.report_generator.generate_appointment_report(start_date, end_date)
-        self._display_appointment_report()
+        try:
+            print("DEBUG: Generating appointment report...")
+            start_date = self.start_date_var.get()
+            end_date = self.end_date_var.get()
+            
+            self.current_report = self.report_generator.generate_appointment_report(start_date, end_date)
+            print(f"DEBUG: Appointment report generated: {self.current_report.get('total_appointments', 0)} appointments")
+            self._display_appointment_report()
+        except Exception as e:
+            print(f"ERROR: Failed to generate appointment report: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            messagebox.showerror("Error", f"Failed to generate appointment report: {str(e)}")
     
     def generate_financial_report(self):
         """Generate financial report"""
-        start_date = self.start_date_var.get()
-        end_date = self.end_date_var.get()
-        
-        self.current_report = self.report_generator.generate_financial_report(start_date, end_date)
-        self._display_financial_report()
+        try:
+            print("DEBUG: Generating financial report...")
+            start_date = self.start_date_var.get()
+            end_date = self.end_date_var.get()
+            
+            self.current_report = self.report_generator.generate_financial_report(start_date, end_date)
+            print(f"DEBUG: Financial report generated: Revenue {self.current_report.get('total_revenue', 0)}")
+            self._display_financial_report()
+        except Exception as e:
+            print(f"ERROR: Failed to generate financial report: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            messagebox.showerror("Error", f"Failed to generate financial report: {str(e)}")
     
     def generate_department_report(self):
         """Generate department report"""
-        self.current_report = self.report_generator.generate_department_report()
-        self._display_department_report()
+        try:
+            print("DEBUG: Generating department report...")
+            self.current_report = self.report_generator.generate_department_report()
+            print(f"DEBUG: Department report generated successfully")
+            self._display_department_report()
+        except Exception as e:
+            print(f"ERROR: Failed to generate department report: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            messagebox.showerror("Error", f"Failed to generate department report: {str(e)}")
     
     def _display_patient_report(self):
         """Display patient summary report"""
