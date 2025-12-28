@@ -15,3 +15,6 @@ pytest-cov>=3.0.0
 ## Development Dependencies
 pylint>=2.15.0
 autopep8>=2.0.0
+
+## Documentation
+python-docx>=1.2.0  # Word document generation
